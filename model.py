@@ -10,8 +10,10 @@ from sqlalchemy import Column, Integer, Text, TIMESTAMP
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSON
 
+
 class Base(DeclarativeBase):
     pass
+
 
 class Feed(Base):
     __tablename__ = "feed"
@@ -27,7 +29,7 @@ class FeedEntry(Base):
     __tablename__ = "feed_entry"
     id = Column(Integer, primary_key=True, autoincrement=True)
     feed_id: Mapped[int] = Column(Integer, ForeignKey("feed.id"))
-    feed_entry_id = Column(Text, unique=True, nullable=False)
+    feed_entry_id = Column(Text, unique=True, nullable=False, index=True)
     title = Column(Text, nullable=False)
     author = Column(Text)
     publication_date = Column(TIMESTAMP(timezone=True))
