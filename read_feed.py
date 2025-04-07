@@ -47,16 +47,26 @@ def store_feed_entries(feed_id: int, entries: list[dict]):
     logger.info(f"Storing {len(entries)} entries for feed ID {feed_id}...")
     with Session(engine) as session:
         for entry in entries:
-            feed_entry = FeedEntry(
-                feed_id=feed_id,
-                feed_entry_id=entry.guid,
-                title=entry.title,
-                publication_date=datetime.fromtimestamp(
-                    time.mktime(entry.get("published_parsed"))
-                ),
-                raw=entry,
-            )
-            session.merge(feed_entry)
+            feed_entry_id_value = entry.get("guid")
+            if feed_entry_id_value:
+                existing_entry = (
+                    session.query(FeedEntry)
+                    .filter(FeedEntry.feed_entry_id == feed_entry_id_value)
+                    .first()
+                )
+                if existing_entry:
+                    continue
+
+                feed_entry = FeedEntry(
+                    feed_id=feed_id,
+                    feed_entry_id=entry.guid,
+                    title=entry.title,
+                    publication_date=datetime.fromtimestamp(
+                        time.mktime(entry.get("published_parsed"))
+                    ),
+                    raw=entry,
+                )
+                session.add(feed_entry)
         session.commit()
     logger.info(f"Stored entries for feed ID {feed_id}")
 
