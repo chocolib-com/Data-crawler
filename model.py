@@ -35,3 +35,15 @@ class FeedEntry(Base):
     publication_date = Column(TIMESTAMP(timezone=True))
     raw = Column(JSON, nullable=False)
     _created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "feed_id": self.feed_id,
+            "feed_entry_id": self.feed_entry_id,
+            "title": self.title,
+            "author": self.author,
+            "publication_date": self.publication_date.isoformat()
+            if self.publication_date
+            else None,
+        }
