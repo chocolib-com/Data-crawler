@@ -56,7 +56,7 @@ def store_feed_entries(feed_id: int, entries: list[dict]):
                 ),
                 raw=entry,
             )
-            session.add(feed_entry)
+            session.merge(feed_entry)
         session.commit()
     logger.info(f"Stored entries for feed ID {feed_id}")
 
